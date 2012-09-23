@@ -29,7 +29,7 @@ if [ ! -f $BUILD_DIR/Gemfile ]; then
 fi
 cd $BUILD_DIR
 gem install bundler --install-dir .gems --no-rdoc --no-ri | indent
-bundle install --no-deployment | indent
+bundle install | indent
 
 echo "-----> Compiling Jekyll"
 bundle exec jekyll --no-auto --no-server | indent
