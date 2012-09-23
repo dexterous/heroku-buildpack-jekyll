@@ -27,8 +27,9 @@ echo "-----> Installing dependencies"
 if [ ! -f $BUILD_DIR/Gemfile ]; then
   generate_gemfile
 fi
-gem install bundler --install-dir $BUILD_DIR/.gems --no-rdoc --no-ri | indent
-bundle install --gemfile $BUILD_DIR/Gemfile --no-deployment | indent
+cd $BUILD_DIR
+gem install bundler --install-dir .gems --no-rdoc --no-ri | indent
+bundle install --no-deployment | indent
 
 echo "-----> Compiling Jekyll"
 bundle exec jekyll --no-auto --no-server | indent
