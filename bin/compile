@@ -1,6 +1,8 @@
 #!/bin/sh
 
-BUILD_DIR=$1
+export BUILD_DIR=$1
+export GEM_HOME=$BUILD_DIR/.gems
+export PATH=$BUILD_DIR/.gems/bin:$PATH
 
 indent() {
   sed -u 's/^/       /'
@@ -26,10 +28,10 @@ if [ ! -f $BUILD_DIR/Gemfile ]; then
   generate_gemfile
 fi
 gem install bundler --install-dir $BUILD_DIR/.gems --no-rdoc --no-ri | indent
-$BUILD_DIR/.gems/bin/bundle install --deployment | indent
+bundle install --deployment | indent
 
 echo "-----> Compiling Jekyll"
-$BUILD_DIR/.gems/bin/bundle exec jekyll --no-auto --no-server | indent
+bundle exec jekyll --no-auto --no-server | indent
 
 echo "-----> Adding config.ru"
 generate_config_ru
