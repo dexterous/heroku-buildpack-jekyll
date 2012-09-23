@@ -5,14 +5,14 @@ indent() {
 }
 
 generate_gemfile() {
-cat >> $1/Gemfile <<'EOF'
+cat >>$1/Gemfile <<'EOF'
 source :rubygems
 gem "jekyll"
 EOF
 }
 
 generate_config_ru() {
-cat >> $1/config.ru <<'EOF'
+cat >>$1/config.ru <<'EOF'
 require "rack/static"
 use Rack::Static, urls: ["/"], root: "_site", index: "index.html", headers: { "Cache-Control" => "public" }
 run ->(env) { [ 404, {}, [] ] }
@@ -23,10 +23,11 @@ echo "-----> Installing dependencies"
 if [ ! -f $1/Gemfile ]; then
   generate_gemfile
 fi
+gem install bundler --install-dir $1/.gems | indent
 bundle install --deployment | indent
 
 echo "-----> Compiling Jekyll"
-jekyll --no-auto --no-server | indent
+bundle exec jekyll --no-auto --no-server | indent
 
 echo "-----> Adding config.ru"
 generate_config_ru
