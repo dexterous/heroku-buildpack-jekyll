@@ -4,13 +4,11 @@ indent() {
   sed -u 's/^/       /'
 }
 
-echo "-----> Installing Jekyll"
-gem install jekyll --no-rdoc --no-ri | indent
-
-if [ -f $1/Gemfile ]; then
-  echo "-----> Installing Gemfile"
-  bundle install --deployment | indent
+echo "-----> Installing dependencies"
+if [ ! -f $1/Gemfile ]; then
+  cp ../support/Gemfile $1/Gemfile
 fi
+bundle install --deployment | indent
 
 echo "-----> Compiling Jekyll"
 jekyll --no-auto --no-server | indent
