@@ -1,0 +1,19 @@
+#!/bin/sh
+
+indent() {
+  sed -u 's/^/       /'
+}
+
+echo "-----> Installing Jekyll"
+gem install jekyll --no-rdoc --no-ri | indent
+
+if [ -f $1/Gemfile ]; then
+  echo "-----> Installing Gemfile"
+  bundle install --deployment | indent
+fi
+
+echo "-----> Compiling Jekyll"
+jekyll --no-auto --no-server | indent
+
+echo "-----> Copying config.ru"
+cp ../support/config.ru $1/config.ru

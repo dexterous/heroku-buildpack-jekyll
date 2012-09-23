@@ -1,0 +1,10 @@
+#!/bin/sh
+
+cat << EOF
+---
+addons:
+config_vars:
+  RACK_ENV:production
+default_process_types:
+  web: rackup --port \$PORT
+EOF

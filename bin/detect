@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ -f $1/_config.yml ]; then
+  echo "Jekyll"
+  exit 0
+else
+  exit 1
+fi
