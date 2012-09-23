@@ -4,7 +4,7 @@ indent() {
   sed -u 's/^/       /'
 }
 
-pwd
+ls
 
 echo "-----> Installing dependencies"
 if [ ! -f $1/Gemfile ]; then
