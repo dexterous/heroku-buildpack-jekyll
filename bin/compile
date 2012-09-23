@@ -5,14 +5,14 @@ indent() {
 }
 
 generate_gemfile() {
-cat >>$1/Gemfile <<'EOF'
+cat << EOF > $1/Gemfile
 source :rubygems
 gem "jekyll"
 EOF
 }
 
 generate_config_ru() {
-cat >>$1/config.ru <<'EOF'
+cat << EOF > $1/config.ru
 require "rack/static"
 use Rack::Static, urls: ["/"], root: "_site", index: "index.html", headers: { "Cache-Control" => "public" }
 run ->(env) { [ 404, {}, [] ] }
