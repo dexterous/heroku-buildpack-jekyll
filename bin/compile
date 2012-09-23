@@ -28,7 +28,7 @@ if [ ! -f $BUILD_DIR/Gemfile ]; then
   generate_gemfile
 fi
 gem install bundler --install-dir $BUILD_DIR/.gems --no-rdoc --no-ri | indent
-bundle install --deployment --gemfile $BUILD_DIR/Gemfile  | indent
+bundle install --gemfile $BUILD_DIR/Gemfile  | indent
 
 echo "-----> Compiling Jekyll"
 bundle exec jekyll --no-auto --no-server | indent
