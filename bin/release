@@ -6,5 +6,5 @@ addons:
 config_vars:
   RACK_ENV:production
 default_process_types:
-  web: rackup --port \$PORT
+  web: $1/.gems/bin/bundle exec rackup --port \$PORT
 EOF

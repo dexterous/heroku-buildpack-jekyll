@@ -1,18 +1,20 @@
 #!/bin/sh
 
+BUILD_DIR=$1
+
 indent() {
   sed -u 's/^/       /'
 }
 
 generate_gemfile() {
-cat << EOF > $1/Gemfile
+cat >>$BUILD_DIR/Gemfile <<'EOF'
 source :rubygems
 gem "jekyll"
 EOF
 }
 
 generate_config_ru() {
-cat << EOF > $1/config.ru
+cat >>$BUILD_DIR/config.ru <<'EOF'
 require "rack/static"
 use Rack::Static, urls: ["/"], root: "_site", index: "index.html", headers: { "Cache-Control" => "public" }
 run ->(env) { [ 404, {}, [] ] }
@@ -20,14 +22,14 @@ EOF
 }
 
 echo "-----> Installing dependencies"
-if [ ! -f $1/Gemfile ]; then
+if [ ! -f $BUILD_DIR/Gemfile ]; then
   generate_gemfile
 fi
-gem install bundler --install-dir $1/.gems | indent
-bundle install --deployment | indent
+gem install bundler --install-dir $BUILD_DIR/.gems --no-rdoc --no-ri | indent
+$BUILD_DIR/.gems/bin/bundle install --deployment | indent
 
 echo "-----> Compiling Jekyll"
-bundle exec jekyll --no-auto --no-server | indent
+$BUILD_DIR/.gems/bin/bundle exec jekyll --no-auto --no-server | indent
 
 echo "-----> Adding config.ru"
 generate_config_ru
