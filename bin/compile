@@ -4,16 +4,29 @@ indent() {
   sed -u 's/^/       /'
 }
 
-ls
+generate_gemfile() {
+cat >> $1/Gemfile <<'EOF'
+source :rubygems
+gem "jekyll"
+EOF
+}
+
+generate_config_ru() {
+cat >> $1/config.ru <<'EOF'
+require "rack/static"
+use Rack::Static, urls: ["/"], root: "_site", index: "index.html", headers: { "Cache-Control" => "public" }
+run ->(env) { [ 404, {}, [] ] }
+EOF
+}
 
 echo "-----> Installing dependencies"
 if [ ! -f $1/Gemfile ]; then
-  cp support/Gemfile $1/Gemfile
+  generate_gemfile
 fi
 bundle install --deployment | indent
 
 echo "-----> Compiling Jekyll"
 jekyll --no-auto --no-server | indent
 
-echo "-----> Copying config.ru"
-cp support/config.ru $1/config.ru
+echo "-----> Adding config.ru"
+generate_config_ru
