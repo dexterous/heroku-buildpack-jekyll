@@ -28,7 +28,7 @@ if [ ! -f $BUILD_DIR/Gemfile ]; then
   generate_gemfile
 fi
 cd $BUILD_DIR
-rm Gemfile Gemfile.lock
+ls -lha
 gem install bundler --install-dir .gems --no-rdoc --no-ri | indent
 bundle install | indent
 
