@@ -4,9 +4,11 @@ indent() {
   sed -u 's/^/       /'
 }
 
+pwd
+
 echo "-----> Installing dependencies"
 if [ ! -f $1/Gemfile ]; then
-  cp ../support/Gemfile $1/Gemfile
+  cp support/Gemfile $1/Gemfile
 fi
 bundle install --deployment | indent
 
@@ -14,4 +16,4 @@ echo "-----> Compiling Jekyll"
 jekyll --no-auto --no-server | indent
 
 echo "-----> Copying config.ru"
-cp ../support/config.ru $1/config.ru
+cp support/config.ru $1/config.ru
