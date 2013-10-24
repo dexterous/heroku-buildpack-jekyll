@@ -1,39 +1,48 @@
 #!/bin/sh
 
 export BUILD_DIR=$1
-export GEM_HOME=$BUILD_DIR/.gems
-export PATH=$BUILD_DIR/.gems/bin:$PATH
+export CACHE_DIR=$2
+export RACK_HOME=$BUILD_DIR/gems
+export JEKYLL_HOME=$CACHE_DIR/gems
+export PATH=$RACK_HOME/bin:$JEKYLL_HOME/bin:$PATH
 
 indent() {
   sed -u 's/^/       /'
 }
 
-generate_gemfile() {
-cat >>$BUILD_DIR/Gemfile <<'EOF'
-source :rubygems
-gem "jekyll"
-EOF
-}
+if [ ! -d "$JEKYLL_HOME" ]; then
+echo "-----> Creating Jekyll installation directory"
+mkdir -p $JEKYLL_HOME
+fi
 
-generate_config_ru() {
-cat >>$BUILD_DIR/config.ru <<'EOF'
+echo "-----> Installing jekyll with gem $(gem --version)"
+gem install jekyll --install-dir $JEKYLL_HOME --no-rdoc --no-ri | indent
+
+echo "-----> Building site with $(jekyll --version)"
+jekyll build | indent
+
+echo "-----> Creating bash profile"
+cat > $BUILD_DIR/.profile.d/rack.sh <<EOF
+RACK_ENV=${RACK_ENV:-production}
+PATH=$RACK_HOME/bin:$PATH
+EOF
+
+chmod +x $BUILD_DIR/.profile.d/rack.sh
+
+echo "-----> Adding Rack config"
+cat > $BUILD_DIR/config.ru <<EOF
 require "rack/static"
-use Rack::Static, urls: ["/"], root: "_site", index: "index.html", headers: { "Cache-Control" => "public" }
+
+use Rack::Static,
+    urls: ["/"],
+    root: "_site",
+    index: "index.html",
+    headers: { "Cache-Control" => "public" }
+
 run ->(env) { [ 404, {}, [] ] }
 EOF
-}
 
-echo "-----> Installing dependencies"
-if [ ! -f $BUILD_DIR/Gemfile ]; then
-  generate_gemfile
-fi
-cd $BUILD_DIR
-ls -lha
-gem install bundler --install-dir .gems --no-rdoc --no-ri | indent
-bundle install | indent
+echo "-----> Deleting sources"
+ls | grep -v _site | xargs rm -rf
 
-echo "-----> Compiling Jekyll"
-bundle exec jekyll --no-auto --no-server | indent
-
-echo "-----> Adding config.ru"
-generate_config_ru
+#TODO:

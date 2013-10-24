@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -f $1/_config.yml ]; then
+if [ -f $1/_config.yml -a -d $1/_posts ]; then
   echo "Jekyll"
   exit 0
 else
